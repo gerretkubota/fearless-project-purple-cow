@@ -9,7 +9,7 @@ function App() {
       <header>
         <h1>Project Purple Cow</h1>
       </header>
-      <Counter apiKey={KEY} amount={1} />
+      <Counter apiKey={KEY} />
     </div>
   );
 }

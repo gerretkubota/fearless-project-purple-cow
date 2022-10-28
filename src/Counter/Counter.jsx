@@ -6,10 +6,11 @@ const URL = 'https://api.countapi.xyz';
 const GET_HITS = `${URL}/get`;
 const UPDATE_HITS = `${URL}/update`;
 
-const Counter = ({ apiKey }) => {
+const Counter = ({ apiKey, amount = 1 }) => {
   const [numberOfHits, setNumberOfHits] = useState(0);
   const [error, setError] = useState({ status: false, message: '' });
   const [loading, setLoading] = useState(false);
+  const [amountOfHits, setAmountOfHits] = useState(amount);
 
   const hitsEndpoint = useCallback(
     async (endpoint) => {
@@ -33,7 +34,9 @@ const Counter = ({ apiKey }) => {
     [setError, setLoading, setNumberOfHits, error]
   );
 
-  const handleHit = () => {};
+  const handleHit = () => {
+    hitsEndpoint(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
+  };
 
   useEffect(() => {
     if (apiKey.length) {
