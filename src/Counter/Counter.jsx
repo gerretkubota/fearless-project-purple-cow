@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
-import Button from './Components/Button';
+import { Button } from './Components';
+import { useDebounce } from '../Hooks';
 
 const URL = 'https://api.countapi.xyz';
 const GET_HITS = `${URL}/get`;
@@ -11,32 +12,41 @@ const Counter = ({ apiKey, amount = 1 }) => {
   const [error, setError] = useState({ status: false, message: '' });
   const [loading, setLoading] = useState(false);
   const [amountOfHits, setAmountOfHits] = useState(amount);
+  const [hasClicked, setHasClicked] = useState(false);
+  const debounceValue = useDebounce(hasClicked);
 
-  const hitsEndpoint = useCallback(
-    async (endpoint) => {
-      try {
-        setLoading(true);
+  const hitsEndpoint = async (endpoint) => {
+    try {
+      setLoading(true);
 
-        if (error.status) {
-          setError({ status: false, message: '' });
-        }
-
-        const response = await fetch(endpoint);
-        const result = await response.json();
-
-        setNumberOfHits(result.value);
-        setLoading(false);
-      } catch (e) {
-        console.error(e.error);
-        setError({ status: true, message: e.error });
+      if (error.status) {
+        setError({ status: false, message: '' });
       }
-    },
-    [setError, setLoading, setNumberOfHits, error]
-  );
 
-  const handleHit = useCallback(() => {
+      if (debounceValue) {
+        setHasClicked(false);
+      }
+
+      const response = await fetch(endpoint);
+      const result = await response.json();
+
+      setNumberOfHits(result.value);
+      setLoading(false);
+    } catch (e) {
+      console.error(e.error);
+      setError({ status: true, message: e.error });
+    }
+  };
+
+  const incrementHits = () => {
     hitsEndpoint(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
-  }, [hitsEndpoint, amountOfHits, apiKey]);
+  };
+
+  const handleHit = () => {
+    if (hasClicked === false) {
+      setHasClicked(true);
+    }
+  };
 
   useEffect(() => {
     if (apiKey.length) {
@@ -46,6 +56,12 @@ const Counter = ({ apiKey, amount = 1 }) => {
       setError({ status: true, message: 'Please provide an api key.' });
     }
   }, []);
+
+  useEffect(() => {
+    if (debounceValue) {
+      incrementHits();
+    }
+  }, [debounceValue]);
 
   return (
     <div>
