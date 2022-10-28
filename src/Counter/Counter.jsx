@@ -9,7 +9,7 @@ const GET_HITS = `${URL}/get`;
 const UPDATE_HITS = `${URL}/update`;
 
 const Counter = ({ apiKey, amount = 1 }) => {
-  const [numberOfHits, setNumberOfHits] = useState(amount);
+  const [numberOfHits, setNumberOfHits] = useState(0);
   const [amountOfHits, setAmountOfHits] = useState(amount);
   const [hasClicked, setHasClicked] = useState(false);
   // custom hooks
