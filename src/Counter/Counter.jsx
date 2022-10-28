@@ -34,9 +34,9 @@ const Counter = ({ apiKey, amount = 1 }) => {
     [setError, setLoading, setNumberOfHits, error]
   );
 
-  const handleHit = () => {
+  const handleHit = useCallback(() => {
     hitsEndpoint(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
-  };
+  }, [hitsEndpoint, amountOfHits, apiKey]);
 
   useEffect(() => {
     if (apiKey.length) {
