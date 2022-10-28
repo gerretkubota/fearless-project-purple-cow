@@ -11,20 +11,23 @@ const Counter = ({ apiKey, amount = 1 }) => {
   const [numberOfHits, setNumberOfHits] = useState(amount);
   const [amountOfHits, setAmountOfHits] = useState(amount);
   const [hasClicked, setHasClicked] = useState(false);
-
+  // custom hooks
   const { loading, error, result, fetchApi, setError } = useApi();
   const debounceValue = useDebounce(hasClicked);
 
+  // hanlder for incrementing counter
   const incrementHits = () => {
     fetchApi(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
   };
 
+  // onClick handler to distinguish if button has been clicked
   const handleHit = () => {
     if (hasClicked === false) {
       setHasClicked(true);
     }
   };
 
+  // to fetch existing counter value on initial render
   useEffect(() => {
     if (apiKey.length) {
       fetchApi(`${GET_HITS}/${apiKey}`);
@@ -34,12 +37,15 @@ const Counter = ({ apiKey, amount = 1 }) => {
     }
   }, []);
 
+  // update counter value after fetch call is complete
   useEffect(() => {
     if (result) {
       setNumberOfHits(result.value);
     }
   }, [result]);
 
+  // only fetch when it has been clicked 'once'
+  // activates 'debouncer'
   useEffect(() => {
     if (debounceValue) {
       incrementHits();
@@ -63,6 +69,7 @@ const Counter = ({ apiKey, amount = 1 }) => {
 
 Counter.propTypes = {
   apiKey: PropTypes.string,
+  amount: PropTypes.number,
 };
 
 export default Counter;

@@ -1,5 +1,10 @@
 import { useState } from 'react';
 
+/**
+ *
+ * @returns {error, setError, fetchApi, loading, result}
+ * custom hook (resuable) for fetching apis and returning the response
+ */
 const useApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({ status: false, message: '' });
