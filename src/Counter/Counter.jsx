@@ -1,45 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from './Components';
-import { useDebounce } from '../Hooks';
+import { useDebounce, useApi } from '../Hooks';
 
 const URL = 'https://api.countapi.xyz';
 const GET_HITS = `${URL}/get`;
 const UPDATE_HITS = `${URL}/update`;
 
 const Counter = ({ apiKey, amount = 1 }) => {
-  const [numberOfHits, setNumberOfHits] = useState(0);
-  const [error, setError] = useState({ status: false, message: '' });
-  const [loading, setLoading] = useState(false);
+  const [numberOfHits, setNumberOfHits] = useState(amount);
   const [amountOfHits, setAmountOfHits] = useState(amount);
   const [hasClicked, setHasClicked] = useState(false);
+
+  const { loading, error, result, fetchApi, setError } = useApi();
   const debounceValue = useDebounce(hasClicked);
 
-  const hitsEndpoint = async (endpoint) => {
-    try {
-      setLoading(true);
-
-      if (error.status) {
-        setError({ status: false, message: '' });
-      }
-
-      if (debounceValue) {
-        setHasClicked(false);
-      }
-
-      const response = await fetch(endpoint);
-      const result = await response.json();
-
-      setNumberOfHits(result.value);
-      setLoading(false);
-    } catch (e) {
-      console.error(e.error);
-      setError({ status: true, message: e.error });
-    }
-  };
-
   const incrementHits = () => {
-    hitsEndpoint(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
+    fetchApi(`${UPDATE_HITS}/${apiKey}?amount=${amountOfHits}`);
   };
 
   const handleHit = () => {
@@ -50,7 +27,7 @@ const Counter = ({ apiKey, amount = 1 }) => {
 
   useEffect(() => {
     if (apiKey.length) {
-      hitsEndpoint(`${GET_HITS}/${apiKey}`);
+      fetchApi(`${GET_HITS}/${apiKey}`);
     } else {
       console.error('Please provide an api key.');
       setError({ status: true, message: 'Please provide an api key.' });
@@ -58,8 +35,15 @@ const Counter = ({ apiKey, amount = 1 }) => {
   }, []);
 
   useEffect(() => {
+    if (result) {
+      setNumberOfHits(result.value);
+    }
+  }, [result]);
+
+  useEffect(() => {
     if (debounceValue) {
       incrementHits();
+      setHasClicked(false);
     }
   }, [debounceValue]);
 
