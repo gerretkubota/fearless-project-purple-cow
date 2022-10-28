@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from './Components';
 import { useDebounce, useApi } from '../Hooks';
+import './styles.css';
 
 const URL = 'https://api.countapi.xyz';
 const GET_HITS = `${URL}/get`;
@@ -57,7 +58,10 @@ const Counter = ({ apiKey, amount = 1 }) => {
     <div>
       {!loading && (
         <div>
-          <p>Current number of hits: {numberOfHits}</p>
+          <p>
+            Current number of hits:{' '}
+            <span className="numberOfHits">{numberOfHits}</span>
+          </p>
           <Button content="Hit" onClick={handleHit} />
         </div>
       )}

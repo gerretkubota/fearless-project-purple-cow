@@ -1,13 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import './styles.css';
 
-const Button = ({ content, onClick, disable }) => (
-  <button onClick={onClick}>{content}</button>
+const Button = ({ className, content, onClick, disabled = false }) => (
+  <button
+    className={className ? `${className} button` : 'button'}
+    onClick={onClick}
+    disabled={disabled}
+  >
+    {content}
+  </button>
 );
 
 Button.propTypes = {
   content: PropTypes.string,
-  disable: PropTypes.bool,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
   onClick: PropTypes.func,
 };
 
