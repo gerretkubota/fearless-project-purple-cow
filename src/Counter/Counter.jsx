@@ -22,15 +22,16 @@ const Counter = ({ apiKey }) => {
       setNumberOfHits(result.value);
       setLoading(false);
     } catch (e) {
-      console.error(e);
-      setError({ status: true, message: 'Could not retrieve hits.' });
+      console.error(e.error);
+      setError({ status: true, message: e.error });
     }
   };
 
   useEffect(() => {
-    if (apiKey) {
+    if (apiKey.length) {
       getHits();
     } else {
+      console.error('Please provide an api key.');
       setError({ status: true, message: 'Please provide an api key.' });
     }
   }, []);
